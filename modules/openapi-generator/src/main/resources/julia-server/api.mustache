@@ -1,0 +1,67 @@
+{{>partial_header}}
+{{#operations}}
+
+{{#operation}}
+function {{operationId}}_read(handler)
+    function {{operationId}}_read_handler(req::HTTP.Request)
+        openapi_params = Dict{String,Any}(){{#hasPathParams}}
+        path_params = HTTP.getparams(req){{#pathParams}}
+        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param({{dataType}}, path_params, "{{baseName}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/pathParams}}{{/hasPathParams}}{{#hasQueryParams}}
+        query_params = HTTP.queryparams(URIs.URI(req.target)){{#queryParams}}
+        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param({{dataType}}, query_params, "{{baseName}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/queryParams}}{{/hasQueryParams}}{{#hasHeaderParams}}
+        headers = Dict{String,String}(HTTP.headers(req)){{#headerParams}}
+        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param({{dataType}}, headers, "{{baseName}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/headerParams}}{{/hasHeaderParams}}{{#hasBodyParam}}{{#bodyParams}}
+        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param_type({{dataType}}, String(req.body)){{/bodyParams}}{{/hasBodyParam}}{{#hasFormParams}}
+        form_data =  HTTP.parse_multipart_form(req){{#formParams}}
+        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param({{dataType}}, form_data, "{{baseName}}"; multipart=true, isfile={{#isFile}}true{{/isFile}}{{^isFile}}false{{/isFile}}, {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/formParams}}{{/hasFormParams}}
+        req.context[:openapi_params] = openapi_params
+
+        return handler(req)
+    end
+end
+
+function {{operationId}}_validate(handler)
+    function {{operationId}}_validate_handler(req::HTTP.Request)
+        openapi_params = req.context[:openapi_params]
+        {{#allParams}}{{#hasValidation}}
+        {{#maxLength}}
+        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :maxLength, openapi_params["{{baseName}}"], {{maxLength}})
+        {{/maxLength}}
+        {{#minLength}}
+        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :minLength, openapi_params["{{baseName}}"], {{minLength}})
+        {{/minLength}}
+        {{#maximum}}
+        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :maximum, openapi_params["{{baseName}}"], {{maximum}}, {{#exclusiveMaximum}}true{{/exclusiveMaximum}}{{^exclusiveMaximum}}false{{/exclusiveMaximum}})
+        {{/maximum}}
+        {{#minimum}}
+        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :minimum, openapi_params["{{baseName}}"], {{minimum}}, {{#exclusiveMinimum}}true{{/exclusiveMinimum}}{{^exclusiveMinimum}}false{{/exclusiveMinimum}})
+        {{/minimum}}
+        {{#maxItems}}
+        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :maxItems, openapi_params["{{baseName}}"], {{maxItems}})
+        {{/maxItems}}
+        {{#minItems}}
+        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :minItems, openapi_params["{{baseName}}"], {{minItems}})
+        {{/minItems}}
+        {{/hasValidation}}{{/allParams}}
+        return handler(req)
+    end
+end
+
+function {{operationId}}_invoke(impl; post_invoke=nothing)
+    function {{operationId}}_invoke_handler(req::HTTP.Request)
+        openapi_params = req.context[:openapi_params]
+        ret = impl.{{operationId}}(req::HTTP.Request{{#allParams}}{{#required}}, openapi_params["{{baseName}}"]{{/required}}{{/allParams}};{{#allParams}}{{^required}} {{paramName}}=get(openapi_params, "{{baseName}}", nothing),{{/required}}{{/allParams}})
+        resp = OpenAPI.Servers.server_response(ret)
+        return (post_invoke === nothing) ? resp : post_invoke(req, resp)
+    end
+end
+
+{{/operation}}
+
+function register{{classname}}(router::HTTP.Router, impl; path_prefix::String="", optional_middlewares...)
+    {{#operation}}
+    HTTP.register!(router, "{{httpMethod}}", path_prefix * "{{path}}", OpenAPI.Servers.middleware(impl, {{operationId}}_read, {{operationId}}_validate, {{operationId}}_invoke; optional_middlewares...))
+    {{/operation}}
+    return router
+end
+{{/operations}}
