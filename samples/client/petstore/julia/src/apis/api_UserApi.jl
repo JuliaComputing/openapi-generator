@@ -11,12 +11,12 @@ This can be used to construct the `OpenAPI.Clients.Client` instance.
 """
 basepath(::Type{ UserApi }) = "http://petstore.swagger.io/v2"
 
-const _returntypes_create_user = Dict{Regex,Type}(
+const _returntypes_create_user_UserApi = Dict{Regex,Type}(
     Regex("^" * replace("0", "x"=>".") * "\$") => Nothing,
 )
 
 function _oacinternal_create_user(_api::UserApi, user::User; _mediaType=nothing)
-    _ctx = OpenAPI.Clients.Ctx(_api.client, "POST", _returntypes_create_user, "/user", ["api_key", ], user)
+    _ctx = OpenAPI.Clients.Ctx(_api.client, "POST", _returntypes_create_user_UserApi, "/user", ["api_key", ], user)
     OpenAPI.Clients.set_header_accept(_ctx, [])
     OpenAPI.Clients.set_header_content_type(_ctx, (_mediaType === nothing) ? ["application/json", ] : [_mediaType])
     return _ctx
@@ -41,12 +41,12 @@ function create_user(_api::UserApi, response_stream::Channel, user::User; _media
     return OpenAPI.Clients.exec(_ctx, response_stream)
 end
 
-const _returntypes_create_users_with_array_input = Dict{Regex,Type}(
+const _returntypes_create_users_with_array_input_UserApi = Dict{Regex,Type}(
     Regex("^" * replace("0", "x"=>".") * "\$") => Nothing,
 )
 
 function _oacinternal_create_users_with_array_input(_api::UserApi, user::Vector{User}; _mediaType=nothing)
-    _ctx = OpenAPI.Clients.Ctx(_api.client, "POST", _returntypes_create_users_with_array_input, "/user/createWithArray", ["api_key", ], user)
+    _ctx = OpenAPI.Clients.Ctx(_api.client, "POST", _returntypes_create_users_with_array_input_UserApi, "/user/createWithArray", ["api_key", ], user)
     OpenAPI.Clients.set_header_accept(_ctx, [])
     OpenAPI.Clients.set_header_content_type(_ctx, (_mediaType === nothing) ? ["application/json", ] : [_mediaType])
     return _ctx
@@ -71,12 +71,12 @@ function create_users_with_array_input(_api::UserApi, response_stream::Channel, 
     return OpenAPI.Clients.exec(_ctx, response_stream)
 end
 
-const _returntypes_create_users_with_list_input = Dict{Regex,Type}(
+const _returntypes_create_users_with_list_input_UserApi = Dict{Regex,Type}(
     Regex("^" * replace("0", "x"=>".") * "\$") => Nothing,
 )
 
 function _oacinternal_create_users_with_list_input(_api::UserApi, user::Vector{User}; _mediaType=nothing)
-    _ctx = OpenAPI.Clients.Ctx(_api.client, "POST", _returntypes_create_users_with_list_input, "/user/createWithList", ["api_key", ], user)
+    _ctx = OpenAPI.Clients.Ctx(_api.client, "POST", _returntypes_create_users_with_list_input_UserApi, "/user/createWithList", ["api_key", ], user)
     OpenAPI.Clients.set_header_accept(_ctx, [])
     OpenAPI.Clients.set_header_content_type(_ctx, (_mediaType === nothing) ? ["application/json", ] : [_mediaType])
     return _ctx
@@ -101,13 +101,13 @@ function create_users_with_list_input(_api::UserApi, response_stream::Channel, u
     return OpenAPI.Clients.exec(_ctx, response_stream)
 end
 
-const _returntypes_delete_user = Dict{Regex,Type}(
+const _returntypes_delete_user_UserApi = Dict{Regex,Type}(
     Regex("^" * replace("400", "x"=>".") * "\$") => Nothing,
     Regex("^" * replace("404", "x"=>".") * "\$") => Nothing,
 )
 
 function _oacinternal_delete_user(_api::UserApi, username::String; _mediaType=nothing)
-    _ctx = OpenAPI.Clients.Ctx(_api.client, "DELETE", _returntypes_delete_user, "/user/{username}", ["api_key", ])
+    _ctx = OpenAPI.Clients.Ctx(_api.client, "DELETE", _returntypes_delete_user_UserApi, "/user/{username}", ["api_key", ])
     OpenAPI.Clients.set_param(_ctx.path, "username", username)  # type String
     OpenAPI.Clients.set_header_accept(_ctx, [])
     OpenAPI.Clients.set_header_content_type(_ctx, (_mediaType === nothing) ? [] : [_mediaType])
@@ -133,14 +133,14 @@ function delete_user(_api::UserApi, response_stream::Channel, username::String; 
     return OpenAPI.Clients.exec(_ctx, response_stream)
 end
 
-const _returntypes_get_user_by_name = Dict{Regex,Type}(
+const _returntypes_get_user_by_name_UserApi = Dict{Regex,Type}(
     Regex("^" * replace("200", "x"=>".") * "\$") => User,
     Regex("^" * replace("400", "x"=>".") * "\$") => Nothing,
     Regex("^" * replace("404", "x"=>".") * "\$") => Nothing,
 )
 
 function _oacinternal_get_user_by_name(_api::UserApi, username::String; _mediaType=nothing)
-    _ctx = OpenAPI.Clients.Ctx(_api.client, "GET", _returntypes_get_user_by_name, "/user/{username}", [])
+    _ctx = OpenAPI.Clients.Ctx(_api.client, "GET", _returntypes_get_user_by_name_UserApi, "/user/{username}", [])
     OpenAPI.Clients.set_param(_ctx.path, "username", username)  # type String
     OpenAPI.Clients.set_header_accept(_ctx, ["application/xml", "application/json", ])
     OpenAPI.Clients.set_header_content_type(_ctx, (_mediaType === nothing) ? [] : [_mediaType])
@@ -166,14 +166,14 @@ function get_user_by_name(_api::UserApi, response_stream::Channel, username::Str
     return OpenAPI.Clients.exec(_ctx, response_stream)
 end
 
-const _returntypes_login_user = Dict{Regex,Type}(
+const _returntypes_login_user_UserApi = Dict{Regex,Type}(
     Regex("^" * replace("200", "x"=>".") * "\$") => String,
     Regex("^" * replace("400", "x"=>".") * "\$") => Nothing,
 )
 
 function _oacinternal_login_user(_api::UserApi, username::String, password::String; _mediaType=nothing)
 
-    _ctx = OpenAPI.Clients.Ctx(_api.client, "GET", _returntypes_login_user, "/user/login", [])
+    _ctx = OpenAPI.Clients.Ctx(_api.client, "GET", _returntypes_login_user_UserApi, "/user/login", [])
     OpenAPI.Clients.set_param(_ctx.query, "username", username)  # type String
     OpenAPI.Clients.set_param(_ctx.query, "password", password)  # type String
     OpenAPI.Clients.set_header_accept(_ctx, ["application/xml", "application/json", ])
@@ -201,12 +201,12 @@ function login_user(_api::UserApi, response_stream::Channel, username::String, p
     return OpenAPI.Clients.exec(_ctx, response_stream)
 end
 
-const _returntypes_logout_user = Dict{Regex,Type}(
+const _returntypes_logout_user_UserApi = Dict{Regex,Type}(
     Regex("^" * replace("0", "x"=>".") * "\$") => Nothing,
 )
 
 function _oacinternal_logout_user(_api::UserApi; _mediaType=nothing)
-    _ctx = OpenAPI.Clients.Ctx(_api.client, "GET", _returntypes_logout_user, "/user/logout", ["api_key", ])
+    _ctx = OpenAPI.Clients.Ctx(_api.client, "GET", _returntypes_logout_user_UserApi, "/user/logout", ["api_key", ])
     OpenAPI.Clients.set_header_accept(_ctx, [])
     OpenAPI.Clients.set_header_content_type(_ctx, (_mediaType === nothing) ? [] : [_mediaType])
     return _ctx
@@ -230,13 +230,13 @@ function logout_user(_api::UserApi, response_stream::Channel; _mediaType=nothing
     return OpenAPI.Clients.exec(_ctx, response_stream)
 end
 
-const _returntypes_update_user = Dict{Regex,Type}(
+const _returntypes_update_user_UserApi = Dict{Regex,Type}(
     Regex("^" * replace("400", "x"=>".") * "\$") => Nothing,
     Regex("^" * replace("404", "x"=>".") * "\$") => Nothing,
 )
 
 function _oacinternal_update_user(_api::UserApi, username::String, user::User; _mediaType=nothing)
-    _ctx = OpenAPI.Clients.Ctx(_api.client, "PUT", _returntypes_update_user, "/user/{username}", ["api_key", ], user)
+    _ctx = OpenAPI.Clients.Ctx(_api.client, "PUT", _returntypes_update_user_UserApi, "/user/{username}", ["api_key", ], user)
     OpenAPI.Clients.set_param(_ctx.path, "username", username)  # type String
     OpenAPI.Clients.set_header_accept(_ctx, [])
     OpenAPI.Clients.set_header_content_type(_ctx, (_mediaType === nothing) ? ["application/json", ] : [_mediaType])
