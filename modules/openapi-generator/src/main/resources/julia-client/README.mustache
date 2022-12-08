@@ -24,19 +24,19 @@ It would include the module named {{packageName}}.
 Documentation is generated as markdown files under the `docs` folder. You can include them in your project documentation.
 Documentation is also embedded in Julia which can be used with a Julia specific documentation generator.
 
-## Documentation for API Endpoints
+## API Endpoints
 
-Class | Method | HTTP request | Description
------------- | ------------- | ------------- | -------------
-{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}*{{classname}}* | [**{{operationId}}**]({{apiDocPath}}{{classname}}.md#{{operationIdLowerCase}}) | **{{httpMethod}}** {{path}} | {{summary}}
+Class | Method
+------------ | -------------
+{{#apiInfo}}{{#apis}}{{#operations}}{{#operation}}*{{classname}}* | [**{{operationId}}**]({{apiDocPath}}{{classname}}.md#{{operationIdLowerCase}})<br/>**{{httpMethod}}** {{path}}<br/>{{summary}}
 {{/operation}}{{/operations}}{{/apis}}{{/apiInfo}}
 
-## Documentation For Models
+## Models
 
 {{#models}}{{#model}} - [{{{classname}}}]({{modelDocPath}}{{{classname}}}.md)
 {{/model}}{{/models}}
 
-## Documentation For Authorization
+## Authorization
 {{^authMethods}} Endpoints do not require authorization.
 {{/authMethods}}{{#authMethods}}{{#last}} Authentication schemes defined for the API:{{/last}}{{/authMethods}}
 {{#authMethods}}
