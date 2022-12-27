@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CaseFormat;
 
-public class AbstractJuliaCodegen extends DefaultCodegen {
+public abstract class AbstractJuliaCodegen extends DefaultCodegen {
     protected final Logger LOGGER = LoggerFactory.getLogger(AbstractJuliaCodegen.class);
 
     protected String srcPath = "src";
