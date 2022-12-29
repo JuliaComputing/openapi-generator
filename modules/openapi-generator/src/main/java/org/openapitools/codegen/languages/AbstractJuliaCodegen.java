@@ -211,7 +211,7 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
     }
 
     protected boolean needsVarEscape(String name) {
-        return !name.matches("[a-zA-Z0-9_]*") && !name.matches("var\".*\"");
+        return (!name.matches("[a-zA-Z0-9_]*") && !name.matches("var\".*\"")) || reservedWords.contains(name);
     }
 
     /**
@@ -349,7 +349,8 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
     }
 
     protected String escapeBaseName(String name) {
-        name = name.replaceAll("\\$", "\\\\\\$");
+        // replace all $ not prefixed with \ with a \
+        name = name.replaceAll("(?<!\\\\)\\$", "\\\\\\$");
         return name;
     }
 
