@@ -44,6 +44,11 @@ function OpenAPI.validate_property(::Type{ {{classname}} }, name::Symbol, val)
     end
 {{/isEnum}}
 {{^isEnum}}
+{{#format}}
+    if name === Symbol("{{baseName}}")
+        OpenAPI.validate_param(name, "{{classname}}", :format, val, "{{format}}")
+    end
+{{/format}}
 {{#hasValidation}}
     if name === Symbol("{{baseName}}")
 {{#maxLength}}
@@ -76,6 +81,9 @@ function OpenAPI.validate_property(::Type{ {{classname}} }, name::Symbol, val)
 {{#pattern}}
         OpenAPI.validate_param(name, "{{classname}}", :pattern, val, r"{{{pattern}}}")
 {{/pattern}}
+{{#multipleOf}}
+        OpenAPI.validate_param(name, "{{classname}}", :multipleOf, val, {{multipleOf}})
+{{/multipleOf}}
     end
 {{/hasValidation}}
 {{/isEnum}}
