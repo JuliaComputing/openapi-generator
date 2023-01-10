@@ -20,6 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableMap;
+import com.samskivert.mustache.Mustache.Lambda;
+import org.openapitools.codegen.templating.mustache.EscapeChar;
 
 public abstract class AbstractJuliaCodegen extends DefaultCodegen {
     protected final Logger LOGGER = LoggerFactory.getLogger(AbstractJuliaCodegen.class);
@@ -336,7 +339,7 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
 
     @Override
     public String escapeUnsafeCharacters(String input) {
-        return input;
+        return input.replace("#=", "#_=").replace("=#", "=_#");
     }
 
     /**
@@ -346,12 +349,6 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
      */
     public String escapeQuotationMark(String input) {
         return input.replace("\"", "\\\"");
-    }
-
-    protected String escapeBaseName(String name) {
-        // replace all $ not prefixed with \ with a \
-        name = name.replaceAll("(?<!\\\\)\\$", "\\\\\\$");
-        return name;
     }
 
     protected String escapeRegex(String pattern) {
@@ -371,7 +368,6 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
     @Override
     public CodegenParameter fromParameter(Parameter param, Set<String> imports) {
         CodegenParameter parameter = super.fromParameter(param, imports);
-        parameter.baseName = escapeBaseName(parameter.baseName);
         if (parameter.pattern != null) {
             parameter.pattern = escapeRegex(parameter.pattern);
         }
@@ -395,7 +391,6 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
     @Override
     public CodegenProperty fromProperty(String name, Schema schema, boolean required) {
         CodegenProperty property = super.fromProperty(name, schema, required);
-        property.baseName = escapeBaseName(property.baseName);
         // if the name needs any escaping, we set it to var"name"
         if (needsVarEscape(property.name)) {
             property.name = "var\"" + property.name + "\"";
@@ -464,5 +459,11 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
         changeParamNames(op.formParams, reservedNames);
 
         return op;
+    }
+
+    @Override
+    protected ImmutableMap.Builder<String, Lambda> addMustacheLambdas() {
+        return super.addMustacheLambdas()
+                .put("escapeDollar", new EscapeChar("(?<!\\\\)\\$", "\\\\\\$"));
     }
 }

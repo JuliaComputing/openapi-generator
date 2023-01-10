@@ -6,14 +6,14 @@ function {{operationId}}_read(handler)
     function {{operationId}}_read_handler(req::HTTP.Request)
         openapi_params = Dict{String,Any}(){{#hasPathParams}}
         path_params = HTTP.getparams(req){{#pathParams}}
-        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param({{dataType}}, path_params, "{{baseName}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/pathParams}}{{/hasPathParams}}{{#hasQueryParams}}
+        openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] = OpenAPI.Servers.to_param({{dataType}}, path_params, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/pathParams}}{{/hasPathParams}}{{#hasQueryParams}}
         query_params = HTTP.queryparams(URIs.URI(req.target)){{#queryParams}}
-        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param({{dataType}}, query_params, "{{baseName}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/queryParams}}{{/hasQueryParams}}{{#hasHeaderParams}}
+        openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] = OpenAPI.Servers.to_param({{dataType}}, query_params, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/queryParams}}{{/hasQueryParams}}{{#hasHeaderParams}}
         headers = Dict{String,String}(HTTP.headers(req)){{#headerParams}}
-        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param({{dataType}}, headers, "{{baseName}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/headerParams}}{{/hasHeaderParams}}{{#hasBodyParam}}{{#bodyParams}}
-        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param_type({{dataType}}, String(req.body)){{/bodyParams}}{{/hasBodyParam}}{{#hasFormParams}}
+        openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] = OpenAPI.Servers.to_param({{dataType}}, headers, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/headerParams}}{{/hasHeaderParams}}{{#hasBodyParam}}{{#bodyParams}}
+        openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] = OpenAPI.Servers.to_param_type({{dataType}}, String(req.body)){{/bodyParams}}{{/hasBodyParam}}{{#hasFormParams}}
         form_data =  HTTP.parse_multipart_form(req){{#formParams}}
-        openapi_params["{{baseName}}"] = OpenAPI.Servers.to_param({{dataType}}, form_data, "{{baseName}}"; multipart=true, isfile={{#isFile}}true{{/isFile}}{{^isFile}}false{{/isFile}}, {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/formParams}}{{/hasFormParams}}
+        openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] = OpenAPI.Servers.to_param({{dataType}}, form_data, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"; multipart=true, isfile={{#isFile}}true{{/isFile}}{{^isFile}}false{{/isFile}}, {{#required}}required=true, {{/required}}{{#isListContainer}}collection_format="{{collectionFormat}}", {{/isListContainer}}){{/formParams}}{{/hasFormParams}}
         req.context[:openapi_params] = openapi_params
 
         return handler(req)
@@ -25,22 +25,22 @@ function {{operationId}}_validate(handler)
         openapi_params = req.context[:openapi_params]
         {{#allParams}}{{#hasValidation}}
         {{#maxLength}}
-        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :maxLength, openapi_params["{{baseName}}"], {{maxLength}})
+        OpenAPI.validate_param("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", "{{operationId}}", :maxLength, openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"], {{maxLength}})
         {{/maxLength}}
         {{#minLength}}
-        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :minLength, openapi_params["{{baseName}}"], {{minLength}})
+        OpenAPI.validate_param("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", "{{operationId}}", :minLength, openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"], {{minLength}})
         {{/minLength}}
         {{#maximum}}
-        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :maximum, openapi_params["{{baseName}}"], {{maximum}}, {{#exclusiveMaximum}}true{{/exclusiveMaximum}}{{^exclusiveMaximum}}false{{/exclusiveMaximum}})
+        OpenAPI.validate_param("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", "{{operationId}}", :maximum, openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"], {{maximum}}, {{#exclusiveMaximum}}true{{/exclusiveMaximum}}{{^exclusiveMaximum}}false{{/exclusiveMaximum}})
         {{/maximum}}
         {{#minimum}}
-        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :minimum, openapi_params["{{baseName}}"], {{minimum}}, {{#exclusiveMinimum}}true{{/exclusiveMinimum}}{{^exclusiveMinimum}}false{{/exclusiveMinimum}})
+        OpenAPI.validate_param("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", "{{operationId}}", :minimum, openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"], {{minimum}}, {{#exclusiveMinimum}}true{{/exclusiveMinimum}}{{^exclusiveMinimum}}false{{/exclusiveMinimum}})
         {{/minimum}}
         {{#maxItems}}
-        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :maxItems, openapi_params["{{baseName}}"], {{maxItems}})
+        OpenAPI.validate_param("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", "{{operationId}}", :maxItems, openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"], {{maxItems}})
         {{/maxItems}}
         {{#minItems}}
-        OpenAPI.validate_param("{{baseName}}", "{{operationId}}", :minItems, openapi_params["{{baseName}}"], {{minItems}})
+        OpenAPI.validate_param("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", "{{operationId}}", :minItems, openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"], {{minItems}})
         {{/minItems}}
         {{/hasValidation}}{{/allParams}}
         return handler(req)
@@ -50,7 +50,7 @@ end
 function {{operationId}}_invoke(impl; post_invoke=nothing)
     function {{operationId}}_invoke_handler(req::HTTP.Request)
         openapi_params = req.context[:openapi_params]
-        ret = impl.{{operationId}}(req::HTTP.Request{{#allParams}}{{#required}}, openapi_params["{{baseName}}"]{{/required}}{{/allParams}};{{#allParams}}{{^required}} {{paramName}}=get(openapi_params, "{{baseName}}", nothing),{{/required}}{{/allParams}})
+        ret = impl.{{operationId}}(req::HTTP.Request{{#allParams}}{{#required}}, openapi_params["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"]{{/required}}{{/allParams}};{{#allParams}}{{^required}} {{paramName}}=get(openapi_params, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", nothing),{{/required}}{{/allParams}})
         resp = OpenAPI.Servers.server_response(ret)
         return (post_invoke === nothing) ? resp : post_invoke(req, resp)
     end

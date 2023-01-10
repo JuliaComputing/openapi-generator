@@ -48,20 +48,20 @@ function _oacinternal_{{operationId}}(_api::{{classname}}{{#allParams}}{{#requir
 {{/allParams}}
     _ctx = OpenAPI.Clients.Ctx(_api.client, "{{httpMethod}}", _returntypes_{{operationId}}, "{{path}}", [{{#authMethods}}"{{name}}", {{/authMethods}}]{{#bodyParam}}, {{paramName}}{{/bodyParam}})
 {{#pathParams}}
-    OpenAPI.Clients.set_param(_ctx.path, "{{baseName}}", {{paramName}}{{#isListContainer}}; collection_format="{{collectionFormat}}"{{/isListContainer}})  # type {{dataType}}
+    OpenAPI.Clients.set_param(_ctx.path, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{paramName}}{{#isListContainer}}; collection_format="{{collectionFormat}}"{{/isListContainer}})  # type {{dataType}}
 {{/pathParams}}
 {{#queryParams}}
-    OpenAPI.Clients.set_param(_ctx.query, "{{baseName}}", {{paramName}}{{#isListContainer}}; collection_format="{{collectionFormat}}"{{/isListContainer}})  # type {{dataType}}
+    OpenAPI.Clients.set_param(_ctx.query, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{paramName}}{{#isListContainer}}; collection_format="{{collectionFormat}}"{{/isListContainer}})  # type {{dataType}}
 {{/queryParams}}
 {{#headerParams}}
-    OpenAPI.Clients.set_param(_ctx.header, "{{baseName}}", {{paramName}}{{#isListContainer}}; collection_format="{{collectionFormat}}"{{/isListContainer}})  # type {{dataType}}
+    OpenAPI.Clients.set_param(_ctx.header, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{paramName}}{{#isListContainer}}; collection_format="{{collectionFormat}}"{{/isListContainer}})  # type {{dataType}}
 {{/headerParams}}
 {{#formParams}}
 {{^isFile}}
-    OpenAPI.Clients.set_param(_ctx.form, "{{baseName}}", {{paramName}}{{#isListContainer}}; collection_format="{{collectionFormat}}"{{/isListContainer}})  # type {{dataType}}
+    OpenAPI.Clients.set_param(_ctx.form, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{paramName}}{{#isListContainer}}; collection_format="{{collectionFormat}}"{{/isListContainer}})  # type {{dataType}}
 {{/isFile}}
 {{#isFile}}
-    OpenAPI.Clients.set_param(_ctx.file, "{{baseName}}", {{paramName}})  # type {{dataType}}
+    OpenAPI.Clients.set_param(_ctx.file, "{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{paramName}})  # type {{dataType}}
 {{/isFile}}
 {{/formParams}}
     OpenAPI.Clients.set_header_accept(_ctx, [{{#produces}}"{{{mediaType}}}", {{/produces}}])

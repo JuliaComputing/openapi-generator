@@ -18,13 +18,13 @@ Base.@kwdef mutable struct {{classname}} <: OpenAPI.APIModel
 
     function {{classname}}({{#allVars}}{{{name}}}, {{/allVars}})
         {{#allVars}}
-        OpenAPI.validate_property({{classname}}, Symbol("{{baseName}}"), {{{name}}})
+        OpenAPI.validate_property({{classname}}, Symbol("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"), {{{name}}})
         {{/allVars}}
         return new({{#allVars}}{{{name}}}, {{/allVars}})
     end
 end # type {{classname}}
 
-const _property_types_{{classname}} = Dict{Symbol,String}({{#allVars}}Symbol("{{baseName}}")=>"{{datatype}}", {{/allVars}})
+const _property_types_{{classname}} = Dict{Symbol,String}({{#allVars}}Symbol("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}")=>"{{datatype}}", {{/allVars}})
 OpenAPI.property_type(::Type{ {{classname}} }, name::Symbol) = Union{Nothing,eval(Base.Meta.parse(_property_types_{{classname}}[name]))}
 
 function check_required(o::{{classname}})
@@ -39,18 +39,18 @@ end
 function OpenAPI.validate_property(::Type{ {{classname}} }, name::Symbol, val)
 {{#allVars}}
 {{#isEnum}}
-    if name === Symbol("{{baseName}}")
+    if name === Symbol("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}")
         OpenAPI.validate_param(name, "{{classname}}", :enum, val, [{{#_enum}}"{{.}}"{{^-last}}, {{/-last}}{{/_enum}}])
     end
 {{/isEnum}}
 {{^isEnum}}
 {{#format}}
-    if name === Symbol("{{baseName}}")
+    if name === Symbol("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}")
         OpenAPI.validate_param(name, "{{classname}}", :format, val, "{{format}}")
     end
 {{/format}}
 {{#hasValidation}}
-    if name === Symbol("{{baseName}}")
+    if name === Symbol("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}")
 {{#maxLength}}
         OpenAPI.validate_param(name, "{{classname}}", :maxLength, val, {{maxLength}})
 {{/maxLength}}
