@@ -1,6 +1,14 @@
 package org.openapitools.codegen.languages;
 
 import org.openapitools.codegen.*;
+import org.openapitools.codegen.meta.features.ClientModificationFeature;
+import org.openapitools.codegen.meta.features.ClientModificationFeature;
+import org.openapitools.codegen.meta.features.DocumentationFeature;
+import org.openapitools.codegen.meta.features.GlobalFeature;
+import org.openapitools.codegen.meta.features.ParameterFeature;
+import org.openapitools.codegen.meta.features.SchemaSupportFeature;
+import org.openapitools.codegen.meta.features.SecurityFeature;
+import org.openapitools.codegen.meta.features.WireFormatFeature;
 
 import java.io.File;
 import java.util.*;
@@ -40,6 +48,31 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
 
     public AbstractJuliaCodegen() {
         super();
+
+        modifyFeatureSet(features -> features
+            .includeDocumentationFeatures(DocumentationFeature.Readme)
+            .includeSchemaSupportFeatures(
+                SchemaSupportFeature.Union, SchemaSupportFeature.allOf,
+                SchemaSupportFeature.anyOf, SchemaSupportFeature.oneOf
+            )
+            .excludeWireFormatFeatures(
+                WireFormatFeature.XML
+            )
+            .excludeSecurityFeatures(
+                SecurityFeature.OAuth2_Implicit, SecurityFeature.OAuth2_Password,
+                SecurityFeature.OAuth2_ClientCredentials, SecurityFeature.OAuth2_AuthorizationCode
+            )
+            .excludeParameterFeatures(
+                ParameterFeature.Cookie
+            )
+            .excludeGlobalFeatures(
+                GlobalFeature.Callbacks, GlobalFeature.Examples,
+                GlobalFeature.Produces, GlobalFeature.Consumes
+            )
+            .includeClientModificationFeatures(
+                ClientModificationFeature.BasePath, ClientModificationFeature.UserAgent
+            )
+        );
 
         reservedWords = new HashSet<String> (
             Arrays.asList(
@@ -82,6 +115,11 @@ public abstract class AbstractJuliaCodegen extends DefaultCodegen {
         typeMapping.put("object", "Any");
         typeMapping.put("Object", "Any");
         typeMapping.put("AnyType", "Any");
+    }
+
+    @Override
+    public GeneratorLanguage generatorLanguage() {
+        return GeneratorLanguage.JULIA;
     }
 
     public void setPackageName(String packageName) {

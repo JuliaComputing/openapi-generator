@@ -15,8 +15,7 @@ Method | HTTP request | Description
 
 
 # **add_pet**
-> add_pet(_api::PetApi, pet::Pet; _mediaType=nothing) -> Pet, OpenAPI.Clients.ApiResponse <br/>
-> add_pet(_api::PetApi, response_stream::Channel, pet::Pet; _mediaType=nothing) -> Channel{ Pet }, OpenAPI.Clients.ApiResponse
+> add_pet(req::HTTP.Request, pet::Pet;) -> Pet
 
 Add a new pet to the store
 
@@ -26,7 +25,7 @@ Add a new pet to the store
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **PetApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **pet** | [**Pet**](Pet.md)| Pet object that needs to be added to the store | 
 
 ### Return type
@@ -42,11 +41,10 @@ Name | Type | Description  | Notes
  - **Content-Type**: application/json, application/xml
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **delete_pet**
-> delete_pet(_api::PetApi, pet_id::Int64; api_key=nothing, _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> delete_pet(_api::PetApi, response_stream::Channel, pet_id::Int64; api_key=nothing, _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> delete_pet(req::HTTP.Request, pet_id::Int64; api_key=nothing,) -> Nothing
 
 Deletes a pet
 
@@ -56,7 +54,7 @@ Deletes a pet
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **PetApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **pet_id** | **Int64**| Pet id to delete | [default to nothing]
 
 ### Optional Parameters
@@ -78,11 +76,10 @@ Nothing
  - **Content-Type**: Not defined
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **find_pets_by_status**
-> find_pets_by_status(_api::PetApi, status::Vector{String}; _mediaType=nothing) -> Vector{Pet}, OpenAPI.Clients.ApiResponse <br/>
-> find_pets_by_status(_api::PetApi, response_stream::Channel, status::Vector{String}; _mediaType=nothing) -> Channel{ Vector{Pet} }, OpenAPI.Clients.ApiResponse
+> find_pets_by_status(req::HTTP.Request, status::Vector{String};) -> Vector{Pet}
 
 Finds Pets by status
 
@@ -92,7 +89,7 @@ Multiple status values can be provided with comma separated strings
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **PetApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **status** | [**Vector{String}**](String.md)| Status values that need to be considered for filter | [default to nothing]
 
 ### Return type
@@ -108,11 +105,10 @@ Name | Type | Description  | Notes
  - **Content-Type**: Not defined
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **find_pets_by_tags**
-> find_pets_by_tags(_api::PetApi, tags::Vector{String}; _mediaType=nothing) -> Vector{Pet}, OpenAPI.Clients.ApiResponse <br/>
-> find_pets_by_tags(_api::PetApi, response_stream::Channel, tags::Vector{String}; _mediaType=nothing) -> Channel{ Vector{Pet} }, OpenAPI.Clients.ApiResponse
+> find_pets_by_tags(req::HTTP.Request, tags::Vector{String};) -> Vector{Pet}
 
 Finds Pets by tags
 
@@ -122,7 +118,7 @@ Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **PetApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **tags** | [**Vector{String}**](String.md)| Tags to filter by | [default to nothing]
 
 ### Return type
@@ -138,11 +134,10 @@ Name | Type | Description  | Notes
  - **Content-Type**: Not defined
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_pet_by_id**
-> get_pet_by_id(_api::PetApi, pet_id::Int64; _mediaType=nothing) -> Pet, OpenAPI.Clients.ApiResponse <br/>
-> get_pet_by_id(_api::PetApi, response_stream::Channel, pet_id::Int64; _mediaType=nothing) -> Channel{ Pet }, OpenAPI.Clients.ApiResponse
+> get_pet_by_id(req::HTTP.Request, pet_id::Int64;) -> Pet
 
 Find pet by ID
 
@@ -152,7 +147,7 @@ Returns a single pet
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **PetApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **pet_id** | **Int64**| ID of pet to return | [default to nothing]
 
 ### Return type
@@ -168,11 +163,10 @@ Name | Type | Description  | Notes
  - **Content-Type**: Not defined
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **update_pet**
-> update_pet(_api::PetApi, pet::Pet; _mediaType=nothing) -> Pet, OpenAPI.Clients.ApiResponse <br/>
-> update_pet(_api::PetApi, response_stream::Channel, pet::Pet; _mediaType=nothing) -> Channel{ Pet }, OpenAPI.Clients.ApiResponse
+> update_pet(req::HTTP.Request, pet::Pet;) -> Pet
 
 Update an existing pet
 
@@ -182,7 +176,7 @@ Update an existing pet
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **PetApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **pet** | [**Pet**](Pet.md)| Pet object that needs to be added to the store | 
 
 ### Return type
@@ -198,11 +192,10 @@ Name | Type | Description  | Notes
  - **Content-Type**: application/json, application/xml
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **update_pet_with_form**
-> update_pet_with_form(_api::PetApi, pet_id::Int64; name=nothing, status=nothing, _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> update_pet_with_form(_api::PetApi, response_stream::Channel, pet_id::Int64; name=nothing, status=nothing, _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> update_pet_with_form(req::HTTP.Request, pet_id::Int64; name=nothing, status=nothing,) -> Nothing
 
 Updates a pet in the store with form data
 
@@ -212,7 +205,7 @@ Updates a pet in the store with form data
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **PetApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **pet_id** | **Int64**| ID of pet that needs to be updated | [default to nothing]
 
 ### Optional Parameters
@@ -235,11 +228,10 @@ Nothing
  - **Content-Type**: application/x-www-form-urlencoded
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **upload_file**
-> upload_file(_api::PetApi, pet_id::Int64; additional_metadata=nothing, file=nothing, _mediaType=nothing) -> ApiResponse, OpenAPI.Clients.ApiResponse <br/>
-> upload_file(_api::PetApi, response_stream::Channel, pet_id::Int64; additional_metadata=nothing, file=nothing, _mediaType=nothing) -> Channel{ ApiResponse }, OpenAPI.Clients.ApiResponse
+> upload_file(req::HTTP.Request, pet_id::Int64; additional_metadata=nothing, file=nothing,) -> ApiResponse
 
 uploads an image
 
@@ -249,7 +241,7 @@ uploads an image
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **PetApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **pet_id** | **Int64**| ID of pet to update | [default to nothing]
 
 ### Optional Parameters
@@ -272,5 +264,5 @@ Name | Type | Description  | Notes
  - **Content-Type**: multipart/form-data
  - **Accept**: application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

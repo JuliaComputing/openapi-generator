@@ -11,8 +11,7 @@ Method | HTTP request | Description
 
 
 # **delete_order**
-> delete_order(_api::StoreApi, order_id::String; _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> delete_order(_api::StoreApi, response_stream::Channel, order_id::String; _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> delete_order(req::HTTP.Request, order_id::String;) -> Nothing
 
 Delete purchase order by ID
 
@@ -22,7 +21,7 @@ For valid response try integer IDs with value < 1000. Anything above 1000 or non
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **StoreApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **order_id** | **String**| ID of the order that needs to be deleted | [default to nothing]
 
 ### Return type
@@ -38,11 +37,10 @@ No authorization required
  - **Content-Type**: Not defined
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_inventory**
-> get_inventory(_api::StoreApi; _mediaType=nothing) -> Dict{String, Int64}, OpenAPI.Clients.ApiResponse <br/>
-> get_inventory(_api::StoreApi, response_stream::Channel; _mediaType=nothing) -> Channel{ Dict{String, Int64} }, OpenAPI.Clients.ApiResponse
+> get_inventory(req::HTTP.Request;) -> Dict{String, Int64}
 
 Returns pet inventories by status
 
@@ -64,11 +62,10 @@ This endpoint does not need any parameter.
  - **Content-Type**: Not defined
  - **Accept**: application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_order_by_id**
-> get_order_by_id(_api::StoreApi, order_id::Int64; _mediaType=nothing) -> Order, OpenAPI.Clients.ApiResponse <br/>
-> get_order_by_id(_api::StoreApi, response_stream::Channel, order_id::Int64; _mediaType=nothing) -> Channel{ Order }, OpenAPI.Clients.ApiResponse
+> get_order_by_id(req::HTTP.Request, order_id::Int64;) -> Order
 
 Find purchase order by ID
 
@@ -78,7 +75,7 @@ For valid response try integer IDs with value <= 5 or > 10. Other values will ge
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **StoreApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **order_id** | **Int64**| ID of pet that needs to be fetched | [default to nothing]
 
 ### Return type
@@ -94,11 +91,10 @@ No authorization required
  - **Content-Type**: Not defined
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **place_order**
-> place_order(_api::StoreApi, order::Order; _mediaType=nothing) -> Order, OpenAPI.Clients.ApiResponse <br/>
-> place_order(_api::StoreApi, response_stream::Channel, order::Order; _mediaType=nothing) -> Channel{ Order }, OpenAPI.Clients.ApiResponse
+> place_order(req::HTTP.Request, order::Order;) -> Order
 
 Place an order for a pet
 
@@ -108,7 +104,7 @@ Place an order for a pet
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **StoreApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **order** | [**Order**](Order.md)| order placed for purchasing the pet | 
 
 ### Return type
@@ -124,5 +120,5 @@ No authorization required
  - **Content-Type**: application/json
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

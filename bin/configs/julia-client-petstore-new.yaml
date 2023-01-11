@@ -1,5 +1,5 @@
 generatorName: julia-client
-outputDir: samples/client/petstore/julia/client
+outputDir: samples/client/petstore/julia
 inputSpec: modules/openapi-generator/src/test/resources/3_0/petstore.yaml
 templateDir: modules/openapi-generator/src/main/resources/julia-client
 additionalProperties:

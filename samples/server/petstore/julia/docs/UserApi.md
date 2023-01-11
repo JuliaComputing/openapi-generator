@@ -15,8 +15,7 @@ Method | HTTP request | Description
 
 
 # **create_user**
-> create_user(_api::UserApi, user::User; _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> create_user(_api::UserApi, response_stream::Channel, user::User; _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> create_user(req::HTTP.Request, user::User;) -> Nothing
 
 Create user
 
@@ -26,7 +25,7 @@ This can only be done by the logged in user.
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **UserApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **user** | [**User**](User.md)| Created user object | 
 
 ### Return type
@@ -42,11 +41,10 @@ Nothing
  - **Content-Type**: application/json
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **create_users_with_array_input**
-> create_users_with_array_input(_api::UserApi, user::Vector{User}; _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> create_users_with_array_input(_api::UserApi, response_stream::Channel, user::Vector{User}; _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> create_users_with_array_input(req::HTTP.Request, user::Vector{User};) -> Nothing
 
 Creates list of users with given input array
 
@@ -56,7 +54,7 @@ Creates list of users with given input array
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **UserApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **user** | [**Vector{User}**](User.md)| List of user object | 
 
 ### Return type
@@ -72,11 +70,10 @@ Nothing
  - **Content-Type**: application/json
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **create_users_with_list_input**
-> create_users_with_list_input(_api::UserApi, user::Vector{User}; _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> create_users_with_list_input(_api::UserApi, response_stream::Channel, user::Vector{User}; _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> create_users_with_list_input(req::HTTP.Request, user::Vector{User};) -> Nothing
 
 Creates list of users with given input array
 
@@ -86,7 +83,7 @@ Creates list of users with given input array
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **UserApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **user** | [**Vector{User}**](User.md)| List of user object | 
 
 ### Return type
@@ -102,11 +99,10 @@ Nothing
  - **Content-Type**: application/json
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **delete_user**
-> delete_user(_api::UserApi, username::String; _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> delete_user(_api::UserApi, response_stream::Channel, username::String; _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> delete_user(req::HTTP.Request, username::String;) -> Nothing
 
 Delete user
 
@@ -116,7 +112,7 @@ This can only be done by the logged in user.
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **UserApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **username** | **String**| The name that needs to be deleted | [default to nothing]
 
 ### Return type
@@ -132,11 +128,10 @@ Nothing
  - **Content-Type**: Not defined
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_user_by_name**
-> get_user_by_name(_api::UserApi, username::String; _mediaType=nothing) -> User, OpenAPI.Clients.ApiResponse <br/>
-> get_user_by_name(_api::UserApi, response_stream::Channel, username::String; _mediaType=nothing) -> Channel{ User }, OpenAPI.Clients.ApiResponse
+> get_user_by_name(req::HTTP.Request, username::String;) -> User
 
 Get user by user name
 
@@ -146,7 +141,7 @@ Get user by user name
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **UserApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **username** | **String**| The name that needs to be fetched. Use user1 for testing. | [default to nothing]
 
 ### Return type
@@ -162,11 +157,10 @@ No authorization required
  - **Content-Type**: Not defined
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **login_user**
-> login_user(_api::UserApi, username::String, password::String; _mediaType=nothing) -> String, OpenAPI.Clients.ApiResponse <br/>
-> login_user(_api::UserApi, response_stream::Channel, username::String, password::String; _mediaType=nothing) -> Channel{ String }, OpenAPI.Clients.ApiResponse
+> login_user(req::HTTP.Request, username::String, password::String;) -> String
 
 Logs user into the system
 
@@ -176,7 +170,7 @@ Logs user into the system
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **UserApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **username** | **String**| The user name for login | [default to nothing]
 **password** | **String**| The password for login in clear text | [default to nothing]
 
@@ -193,11 +187,10 @@ No authorization required
  - **Content-Type**: Not defined
  - **Accept**: application/xml, application/json
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **logout_user**
-> logout_user(_api::UserApi; _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> logout_user(_api::UserApi, response_stream::Channel; _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> logout_user(req::HTTP.Request;) -> Nothing
 
 Logs out current logged in user session
 
@@ -219,11 +212,10 @@ Nothing
  - **Content-Type**: Not defined
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **update_user**
-> update_user(_api::UserApi, username::String, user::User; _mediaType=nothing) -> Nothing, OpenAPI.Clients.ApiResponse <br/>
-> update_user(_api::UserApi, response_stream::Channel, username::String, user::User; _mediaType=nothing) -> Channel{ Nothing }, OpenAPI.Clients.ApiResponse
+> update_user(req::HTTP.Request, username::String, user::User;) -> Nothing
 
 Updated user
 
@@ -233,7 +225,7 @@ This can only be done by the logged in user.
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **_api** | **UserApi** | API context | 
+ **req** | **HTTP.Request** | The HTTP Request object | 
 **username** | **String**| name that need to be deleted | [default to nothing]
 **user** | [**User**](User.md)| Updated user object | 
 
@@ -250,5 +242,5 @@ Nothing
  - **Content-Type**: application/json
  - **Accept**: Not defined
 
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
