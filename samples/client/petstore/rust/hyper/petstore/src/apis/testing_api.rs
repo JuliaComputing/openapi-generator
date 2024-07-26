@@ -15,17 +15,19 @@ use std::pin::Pin;
 use std::option::Option;
 
 use hyper;
+use hyper_util::client::legacy::connect::Connect;
 use futures::Future;
 
+use crate::models;
 use super::{Error, configuration};
 use super::request as __internal_request;
 
-pub struct TestingApiClient<C: hyper::client::connect::Connect>
+pub struct TestingApiClient<C: Connect>
     where C: Clone + std::marker::Send + Sync + 'static {
     configuration: Rc<configuration::Configuration<C>>,
 }
 
-impl<C: hyper::client::connect::Connect> TestingApiClient<C>
+impl<C: Connect> TestingApiClient<C>
     where C: Clone + std::marker::Send + Sync {
     pub fn new(configuration: Rc<configuration::Configuration<C>>) -> TestingApiClient<C> {
         TestingApiClient {
@@ -36,10 +38,10 @@ impl<C: hyper::client::connect::Connect> TestingApiClient<C>
 
 pub trait TestingApi {
     fn tests_file_response_get(&self, ) -> Pin<Box<dyn Future<Output = Result<std::path::PathBuf, Error>>>>;
-    fn tests_type_testing_get(&self, ) -> Pin<Box<dyn Future<Output = Result<crate::models::TypeTesting, Error>>>>;
+    fn tests_type_testing_get(&self, ) -> Pin<Box<dyn Future<Output = Result<models::TypeTesting, Error>>>>;
 }
 
-impl<C: hyper::client::connect::Connect>TestingApi for TestingApiClient<C>
+impl<C: Connect>TestingApi for TestingApiClient<C>
     where C: Clone + std::marker::Send + Sync {
     #[allow(unused_mut)]
     fn tests_file_response_get(&self, ) -> Pin<Box<dyn Future<Output = Result<std::path::PathBuf, Error>>>> {
@@ -50,7 +52,7 @@ impl<C: hyper::client::connect::Connect>TestingApi for TestingApiClient<C>
     }
 
     #[allow(unused_mut)]
-    fn tests_type_testing_get(&self, ) -> Pin<Box<dyn Future<Output = Result<crate::models::TypeTesting, Error>>>> {
+    fn tests_type_testing_get(&self, ) -> Pin<Box<dyn Future<Output = Result<models::TypeTesting, Error>>>> {
         let mut req = __internal_request::Request::new(hyper::Method::GET, "/tests/typeTesting".to_string())
         ;
 

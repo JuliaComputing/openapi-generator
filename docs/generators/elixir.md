@@ -48,7 +48,6 @@ These options may be applied as additional-properties (cli) or configOptions (pl
 <li>AnyType</li>
 <li>Atom</li>
 <li>Boolean</li>
-<li>DateTime</li>
 <li>Decimal</li>
 <li>Float</li>
 <li>Integer</li>
@@ -69,9 +68,22 @@ These options may be applied as additional-properties (cli) or configOptions (pl
 <li>__ENV__</li>
 <li>__FILE__</li>
 <li>__MODULE__</li>
+<li>__struct__</li>
+<li>after</li>
+<li>and</li>
+<li>catch</li>
+<li>do</li>
+<li>else</li>
+<li>end</li>
 <li>false</li>
+<li>fn</li>
+<li>in</li>
 <li>nil</li>
+<li>not</li>
+<li>or</li>
+<li>rescue</li>
 <li>true</li>
+<li>when</li>
 </ul>
 
 ## FEATURE SET
@@ -183,6 +195,7 @@ These options may be applied as additional-properties (cli) or configOptions (pl
 |OAuth2_ClientCredentials|✗|OAS2,OAS3
 |OAuth2_AuthorizationCode|✗|OAS2,OAS3
 |SignatureAuth|✗|OAS3
+|AWSV4Signature|✗|ToolingExtension
 
 ### Wire Format Feature
 | Name | Supported | Defined By |

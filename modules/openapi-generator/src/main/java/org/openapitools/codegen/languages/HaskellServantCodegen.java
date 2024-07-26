@@ -19,7 +19,6 @@ package org.openapitools.codegen.languages;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.Server;
 import org.apache.commons.io.FilenameUtils;
@@ -59,6 +58,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
      *
      * @return the CodegenType for this generator
      */
+    @Override
     public CodegenType getTag() {
         return CodegenType.SERVER;
     }
@@ -69,6 +69,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
      *
      * @return the friendly name for the generator
      */
+    @Override
     public String getName() {
         return "haskell";
     }
@@ -79,6 +80,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
      *
      * @return A string value for the help message
      */
+    @Override
     public String getHelp() {
         return "Generates a Haskell server and client library.";
     }
@@ -113,12 +115,6 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
         specialCharReplacements.put("-", "Dash");
         specialCharReplacements.put(">", "GreaterThan");
         specialCharReplacements.put("<", "LessThan");
-
-        // backslash and double quote need double the escapement for both Java and Haskell
-        specialCharReplacements.remove("\\");
-        specialCharReplacements.remove("\"");
-        specialCharReplacements.put("\\\\", "Back_Slash");
-        specialCharReplacements.put("\\\"", "Double_Quote");
 
         // set the output folder here
         outputFolder = "generated-code/haskell-servant";
@@ -326,7 +322,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
             String c = (String) replacementChar;
             Map<String, Object> o = new HashMap<>();
             o.put("char", c);
-            o.put("replacement", "'" + specialCharReplacements.get(c));
+            o.put("replacement", specialCharReplacements.get(c));
             replacements.add(o);
         }
         additionalProperties.put("specialCharReplacements", replacements);
@@ -339,13 +335,14 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
 
     /**
      * Internal method to set the generateToSchema parameter.
-     *
+     * <p>
      * Basically we're generating ToSchema instances (generically) for all schemas.
      * However, if any of the contained datatypes doesn't have the ToSchema instance,
      * we cannot generate it for its "ancestor" type.
      * This is the case with the "Data.Aeson.Value" type: it doesn't (and cannot) have
      * a Swagger-compatible ToSchema instance. So we have to detect its presence "downstream"
      * the current schema, and if we find it we just don't generate any ToSchema instance.
+     *
      * @param model
      */
     private void setGenerateToSchema(CodegenModel model) {
@@ -362,7 +359,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
 
         List<CodegenModel> children = model.getChildren();
         if (children != null) {
-            for(CodegenModel child : children) {
+            for (CodegenModel child : children) {
                 setGenerateToSchema(child);
             }
         }
@@ -378,11 +375,10 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
     @Override
     public String getTypeDeclaration(Schema p) {
         if (ModelUtils.isArraySchema(p)) {
-            ArraySchema ap = (ArraySchema) p;
-            Schema inner = ap.getItems();
+            Schema inner = ModelUtils.getSchemaItems(p);
             return "[" + getTypeDeclaration(inner) + "]";
         } else if (ModelUtils.isMapSchema(p)) {
-            Schema inner = getAdditionalProperties(p);
+            Schema inner = ModelUtils.getAdditionalProperties(p);
             return "(Map.Map String " + getTypeDeclaration(inner) + ")";
         }
         return fixModelChars(super.getTypeDeclaration(p));
@@ -417,7 +413,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
     @Override
     public String toInstantiationType(Schema p) {
         if (ModelUtils.isMapSchema(p)) {
-            Schema additionalProperties2 = getAdditionalProperties(p);
+            Schema additionalProperties2 = ModelUtils.getAdditionalProperties(p);
             String type = additionalProperties2.getType();
             if (null == type) {
                 LOGGER.error("No Type defined for Additional Property {}\n\tIn Property: {}", additionalProperties2, p);
@@ -425,8 +421,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
             String inner = getSchemaType(additionalProperties2);
             return "(Map.Map Text " + inner + ")";
         } else if (ModelUtils.isArraySchema(p)) {
-            ArraySchema ap = (ArraySchema) p;
-            String inner = getSchemaType(ap.getItems());
+            String inner = getSchemaType(ModelUtils.getSchemaItems(p));
             // Return only the inner type; the wrapping with QueryList is done
             // somewhere else, where we have access to the collection format.
             return inner;
@@ -520,6 +515,13 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
         // Query parameters appended to routes
         for (CodegenParameter param : op.queryParams) {
             String paramType = param.dataType;
+            if ("application/json".equals(param.contentType)) {
+                if (param.isArray) {
+                    paramType = "[JSONQueryParam " + paramType.substring(1, paramType.length() - 1) + "]";
+                } else {
+                    paramType = "(JSONQueryParam " + paramType + ")";
+                }
+            }
             if (param.isArray) {
                 if (StringUtils.isEmpty(param.collectionFormat)) {
                     param.collectionFormat = "csv";
@@ -555,6 +557,13 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
             path.add("Header \"" + param.baseName + "\" " + param.dataType);
 
             String paramType = param.dataType;
+            if ("application/json".equals(param.contentType)) {
+                if (param.isArray) {
+                    paramType = "(JSONQueryParam " + paramType.substring(1, paramType.length() - 1) + ")";
+                } else {
+                    paramType = "(JSONQueryParam " + paramType + ")";
+                }
+            }
             if (param.isArray) {
                 if (StringUtils.isEmpty(param.collectionFormat)) {
                     param.collectionFormat = "csv";
@@ -636,29 +645,6 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
         }
     }
 
-    private String fixOperatorChars(String string) {
-        StringBuilder sb = new StringBuilder();
-        String name = string;
-        //Check if it is a reserved word, in which case the underscore is added when property name is generated.
-        if (string.startsWith("_")) {
-            if (reservedWords.contains(string.substring(1))) {
-                name = string.substring(1);
-            } else if (reservedWordsMappings.containsValue(string)) {
-                name = LEADING_UNDERSCORE.matcher(string).replaceFirst("");
-            }
-        }
-        for (char c : name.toCharArray()) {
-            String cString = String.valueOf(c);
-            if (specialCharReplacements.containsKey(cString)) {
-                sb.append("'");
-                sb.append(specialCharReplacements.get(cString));
-            } else {
-                sb.append(c);
-            }
-        }
-        return sb.toString();
-    }
-
     // Remove characters from a string that do not belong in a model classname
     private String fixModelChars(String string) {
         return string.replace(".", "").replace("-", "");
@@ -680,7 +666,8 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
         // From the model name, compute the prefix for the fields.
         String prefix = camelize(model.classname, LOWERCASE_FIRST_LETTER);
         for (CodegenProperty prop : model.vars) {
-            prop.name = toVarName(prefix + camelize(fixOperatorChars(prop.name)));
+            prop.name = toVarName(prefix + camelize(prop.name));
+            prop.vendorExtensions.put("x-base-name-string-literal", "\"" + escapeText(prop.getBaseName()) + "\"");
         }
 
         // Create newtypes for things with non-object types
@@ -691,8 +678,6 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
             model.vendorExtensions.put("x-custom-newtype", newtype);
         }
 
-        // Provide the prefix as a vendor extension, so that it can be used in the ToJSON and FromJSON instances.
-        model.vendorExtensions.put("x-prefix", prefix);
         model.vendorExtensions.put("x-data", dataOrNewtype);
 
         return model;
@@ -739,5 +724,7 @@ public class HaskellServantCodegen extends DefaultCodegen implements CodegenConf
     }
 
     @Override
-    public GeneratorLanguage generatorLanguage() { return GeneratorLanguage.HASKELL; }
+    public GeneratorLanguage generatorLanguage() {
+        return GeneratorLanguage.HASKELL;
+    }
 }

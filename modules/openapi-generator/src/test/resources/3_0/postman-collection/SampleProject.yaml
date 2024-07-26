@@ -194,6 +194,7 @@ paths:
               Update Email:
                 value:
                   email: rebecca@gmail.com
+                  verified: true
               Update Last Name & Date of Birth:
                 value:
                   lastName: Baker
@@ -244,6 +245,31 @@ paths:
       description: Create a new user.
       tags:
         - basic
+  '/groups/{groupId}':
+    get:
+      summary: Get group by ID
+      tags:
+        - advanced
+      parameters:
+        - description: group Id
+          name: groupId
+          in: path
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Group Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '404':
+          description: Group Not Found
+      operationId: get-groups-groupId
+      description: Get group of users
+
 components:
   securitySchemes:
     BasicAuth:
@@ -297,12 +323,31 @@ components:
           format: date
           description: The date that the user was created.
           example: '2019-08-24'
+        tags:
+          type: array
+          items:
+            type: string
+            description: Tags assigned to the user
       required:
         - id
         - firstName
         - lastName
         - email
         - emailVerified
+    Group:
+      title: Group
+      type: object
+      description: ''
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the given group.
+        name:
+          type: string
+          example: admin
+      required:
+        - id
+        - name
   examples:
     get-user-basic:
       summary: Example request for Get User
@@ -314,6 +359,10 @@ components:
         dateOfBirth: '1997-10-31'
         emailVerified: true
         createDate: '2019-08-24'
+        tags:
+          - user
+          - admin
+          - guest
 tags:
   - name: basic
     description: Basic tag

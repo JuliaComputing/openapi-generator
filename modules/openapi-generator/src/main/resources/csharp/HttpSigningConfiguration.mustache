@@ -18,7 +18,6 @@ namespace {{packageName}}.Client
     /// </summary>
     public class HttpSigningConfiguration
     {
-        #region
         /// <summary>
         /// Initialize the HashAlgorithm and SigningAlgorithm to default value
         /// </summary>
@@ -27,9 +26,7 @@ namespace {{packageName}}.Client
             HashAlgorithm = HashAlgorithmName.SHA256;
             SigningAlgorithm = "PKCS1-v15";
         }
-        #endregion
 
-        #region Properties
         /// <summary>
         ///Gets the Api keyId
         /// </summary>
@@ -70,18 +67,13 @@ namespace {{packageName}}.Client
         /// </summary>
         public int SignatureValidityPeriod { get; set; }
 
-        #endregion
-
-        #region enum
         private enum PrivateKeyType
         {
             None = 0,
             RSA = 1,
             ECDSA = 2,
         }
-        #endregion
 
-        #region Methods
         /// <summary>
         /// Gets the Headers for HttpSigning
         /// </summary>
@@ -90,7 +82,7 @@ namespace {{packageName}}.Client
         /// <param name="path">Path</param>
         /// <param name="requestOptions">Request options</param>
         /// <returns>Http signed headers</returns>
-        internal Dictionary<string, string> GetHttpSignedHeader(string basePath,string method, string path, RequestOptions requestOptions)
+        public Dictionary<string, string> GetHttpSignedHeader(string basePath,string method, string path, RequestOptions requestOptions)
         {
             const string HEADER_REQUEST_TARGET = "(request-target)";
             //The time when the HTTP signature expires. The API server should reject HTTP requests
@@ -110,14 +102,13 @@ namespace {{packageName}}.Client
             const string HEADER_AUTHORIZATION = "Authorization";
 
             //Read the api key from the file
-            if(string.IsNullOrEmpty(this.KeyString))
+            if(File.Exists(KeyFilePath))
             {
                 this.KeyString = ReadApiKeyFromFile(KeyFilePath);
             }
-
-            if(string.IsNullOrEmpty(KeyString))
+            else if(string.IsNullOrEmpty(KeyString))
             {
-                throw new Exception("No API key has been provided.");
+                throw new Exception("No API key has been provided. Supply it using either KeyFilePath or KeyString");
             }
 
             //Hash table to store singed headers
@@ -183,12 +174,12 @@ namespace {{packageName}}.Client
 
             if (HashAlgorithm == HashAlgorithmName.SHA256)
             {
-                var bodyDigest = GetStringHash(HashAlgorithm.ToString(), requestBody);
+                var bodyDigest = GetStringHash(HashAlgorithm, requestBody);
                 Digest = string.Format("SHA-256={0}", Convert.ToBase64String(bodyDigest));
             }
             else if (HashAlgorithm == HashAlgorithmName.SHA512)
             {
-                var bodyDigest = GetStringHash(HashAlgorithm.ToString(), requestBody);
+                var bodyDigest = GetStringHash(HashAlgorithm, requestBody);
                 Digest = string.Format("SHA-512={0}", Convert.ToBase64String(bodyDigest));
             }
             else
@@ -256,7 +247,7 @@ namespace {{packageName}}.Client
             }
             //Concatenate headers value separated by new line
             var headerValuesString = string.Join("\n", headerValuesList);
-            var signatureStringHash = GetStringHash(HashAlgorithm.ToString(), headerValuesString);
+            var signatureStringHash = GetStringHash(HashAlgorithm, headerValuesString);
             string headerSignatureStr = null;
             var keyType = GetKeyType(KeyString);
 
@@ -292,11 +283,27 @@ namespace {{packageName}}.Client
             return HttpSignedRequestHeader;
         }
 
-        private byte[] GetStringHash(string hashName, string stringToBeHashed)
+        private byte[] GetStringHash(HashAlgorithmName hashAlgorithmName, string stringToBeHashed)
         {
-            var hashAlgorithm = System.Security.Cryptography.HashAlgorithm.Create(hashName);
-            var bytes = Encoding.UTF8.GetBytes(stringToBeHashed);
-            var stringHash = hashAlgorithm.ComputeHash(bytes);
+            HashAlgorithm{{nrt?}} hashAlgorithm = null;
+
+            if (hashAlgorithmName == HashAlgorithmName.SHA1)
+                hashAlgorithm = SHA1.Create();
+
+            if (hashAlgorithmName == HashAlgorithmName.SHA256)
+                hashAlgorithm = SHA256.Create();
+
+            if (hashAlgorithmName == HashAlgorithmName.SHA512)
+                hashAlgorithm = SHA512.Create();
+
+            if (hashAlgorithmName == HashAlgorithmName.MD5)
+                hashAlgorithm = MD5.Create();
+
+            if (hashAlgorithm == null)
+                throw new NullReferenceException($"{ nameof(hashAlgorithm) } was null.");
+
+            byte[] bytes = Encoding.UTF8.GetBytes(stringToBeHashed);
+            byte[] stringHash = hashAlgorithm.ComputeHash(bytes);
             return stringHash;
         }
 
@@ -309,6 +316,10 @@ namespace {{packageName}}.Client
 
         private string GetRSASignature(byte[] stringToSign)
         {
+            if (string.IsNullOrEmpty(KeyString))
+            {
+                throw new Exception("No API key has been provided.");
+            }
             RSA rsa = GetRSAProviderFromPemFile(KeyString, KeyPassPhrase);
             if (SigningAlgorithm == "RSASSA-PSS")
             {
@@ -333,6 +344,12 @@ namespace {{packageName}}.Client
         /// <returns>ECDSA signature</returns>
         private string GetECDSASignature(byte[] dataToSign)
         {
+            {{#net60OrLater}}
+            if (!File.Exists(KeyFilePath) && string.IsNullOrEmpty(KeyString))
+            {
+                throw new Exception("No API key has been provided.");
+            }
+
             var keyStr = KeyString;
             const string ecKeyHeader = "-----BEGIN EC PRIVATE KEY-----";
             const string ecKeyFooter = "-----END EC PRIVATE KEY-----";
@@ -340,7 +357,6 @@ namespace {{packageName}}.Client
             var keyBytes = System.Convert.FromBase64String(ecKeyBase64String);
             var ecdsa = ECDsa.Create();
 
-#if (NETCOREAPP3_0 || NETCOREAPP3_1 || NET5_0)
             var byteCount = 0;
             if (KeyPassPhrase != null)
             {
@@ -360,19 +376,23 @@ namespace {{packageName}}.Client
                 }
             }
             else
-            {
                 ecdsa.ImportPkcs8PrivateKey(keyBytes, out byteCount);
-            }
-            var signedBytes = ecdsa.SignHash(dataToSign);
-            var derBytes = ConvertToECDSAANS1Format(signedBytes);
+
+            var derBytes = ecdsa.SignHash(dataToSign, DSASignatureFormat.Rfc3279DerSequence);
             var signedString = System.Convert.ToBase64String(derBytes);
 
             return signedString;
-#else
+            {{/net60OrLater}}
+            {{^net60OrLater}}
             throw new Exception("ECDSA signing is supported only on NETCOREAPP3_0 and above");
-#endif
+            {{/net60OrLater}}
         }
 
+        /// <summary>
+        /// Convert ANS1 format to DER format. Not recommended to use because it generate inavlid signature occationally.
+        /// </summary>
+        /// <param name="signedBytes"></param>
+        /// <returns></returns>
         private byte[] ConvertToECDSAANS1Format(byte[] signedBytes)
         {
             var derBytes = new List<byte>();
@@ -428,6 +448,11 @@ namespace {{packageName}}.Client
 
         private  RSACryptoServiceProvider GetRSAProviderFromPemFile(string keyString, SecureString keyPassPhrase = null)
         {
+            if (string.IsNullOrEmpty(KeyString))
+            {
+                throw new Exception("No API key has been provided.");
+            }
+
             const string pempubheader = "-----BEGIN PUBLIC KEY-----";
             const string pempubfooter = "-----END PUBLIC KEY-----";
             bool isPrivateKeyFile = true;
@@ -661,7 +686,7 @@ namespace {{packageName}}.Client
             Array.Copy(salt, 0, data00, psbytes.Length, salt.Length); //concatenate the salt bytes
 
             // ---- do multi-hashing and concatenate results  D1, D2 ...  into keymaterial bytes ----
-            MD5 md5 = new MD5CryptoServiceProvider();
+            MD5 md5 = MD5.Create();
             byte[] result = null;
             byte[] hashtarget = new byte[HASHLENGTH + data00.Length];   //fixed length initial hashtarget
 
@@ -774,6 +799,5 @@ namespace {{packageName}}.Client
             }
             return apiKeyString;
         }
-        #endregion
     }
 }

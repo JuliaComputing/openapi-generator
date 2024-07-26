@@ -248,7 +248,7 @@ public class PhpMezzioPathHandlerServerCodegen extends AbstractPhpCodegen {
             Schema parameterSchema = ModelUtils.getReferencedSchema(openAPI, queryParameter.getSchema());
             // array
             if (ModelUtils.isArraySchema(parameterSchema)) {
-                Schema itemSchema = ((ArraySchema) parameterSchema).getItems();
+                Schema itemSchema = ModelUtils.getSchemaItems(parameterSchema);
                 ArraySchema arraySchema = new ArraySchema();
                 arraySchema.setMinItems(parameterSchema.getMinItems());
                 arraySchema.setMaxItems(parameterSchema.getMaxItems());
@@ -397,7 +397,7 @@ public class PhpMezzioPathHandlerServerCodegen extends AbstractPhpCodegen {
                 }
             } else if (ModelUtils.isArraySchema(schema)) {
                 //Recursively process schema of array items
-                generateContainerSchemas(openAPI, visitedSchemas, ((ArraySchema) schema).getItems());
+                generateContainerSchemas(openAPI, visitedSchemas, ModelUtils.getSchemaItems(schema));
                 isContainer = Boolean.TRUE;
             } else if (ModelUtils.isMapSchema(schema)) {
                 //Recursively process schema of map items
@@ -412,7 +412,7 @@ public class PhpMezzioPathHandlerServerCodegen extends AbstractPhpCodegen {
                 //Generate special component schema for container
                 String containerSchemaName = generateUniqueSchemaName(openAPI, "Collection");
                 Schema containerSchema = new ObjectSchema();
-                containerSchema.addProperties("inner", schema);
+                containerSchema.addProperty("inner", schema);
                 addInternalExtensionToSchema(containerSchema, VEN_FROM_CONTAINER, Boolean.TRUE);
                 openAPI.getComponents().addSchemas(containerSchemaName, containerSchema);
                 String containerDataType = getTypeDeclaration(toModelName(containerSchemaName));

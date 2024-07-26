@@ -52,10 +52,12 @@ docs/Model/OuterEnumInteger.md
 docs/Model/OuterEnumIntegerDefaultValue.md
 docs/Model/OuterObjectWithEnumProperty.md
 docs/Model/Pet.md
+docs/Model/PropertyNameMapping.md
 docs/Model/ReadOnlyFirst.md
 docs/Model/SingleRefType.md
 docs/Model/SpecialModelName.md
 docs/Model/Tag.md
+docs/Model/TestInlineFreeformAdditionalPropertiesRequest.md
 docs/Model/User.md
 git_push.sh
 lib/Api/AnotherFakeApi.php
@@ -111,10 +113,12 @@ lib/Model/OuterEnumInteger.php
 lib/Model/OuterEnumIntegerDefaultValue.php
 lib/Model/OuterObjectWithEnumProperty.php
 lib/Model/Pet.php
+lib/Model/PropertyNameMapping.php
 lib/Model/ReadOnlyFirst.php
 lib/Model/SingleRefType.php
 lib/Model/SpecialModelName.php
 lib/Model/Tag.php
+lib/Model/TestInlineFreeformAdditionalPropertiesRequest.php
 lib/Model/User.php
 lib/ObjectSerializer.php
 phpunit.xml.dist

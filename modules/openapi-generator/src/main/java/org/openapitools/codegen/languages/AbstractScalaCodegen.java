@@ -20,10 +20,11 @@ package org.openapitools.codegen.languages;
 import com.samskivert.mustache.Escapers;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
-import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openapitools.codegen.*;
@@ -48,8 +49,9 @@ import static org.openapitools.codegen.utils.StringUtils.underscore;
 public abstract class AbstractScalaCodegen extends DefaultCodegen {
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractScalaCodegen.class);
 
-    protected String modelPropertyNaming = CodegenConstants.ENUM_PROPERTY_NAMING_TYPE.camelCase.name();
-    protected String invokerPackage = "org.openapitools.client";
+    @Getter protected String modelPropertyNaming = CodegenConstants.ENUM_PROPERTY_NAMING_TYPE.camelCase.name();
+    @Setter protected String invokerPackage = "org.openapitools.client";
+    @Getter @Setter
     protected String sourceFolder = "src/main/scala";
     protected String appName = "OpenAPI Sample";
     protected String appDescription = "A sample openapi server";
@@ -59,7 +61,7 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
     protected String licenseUrl = "http://apache.org/licenses/LICENSE-2.0.html";
     protected String apiVersion = "1.0";
     protected boolean stripPackageName = true;
-    protected String dateLibrary = DateLibraries.java8.name();
+    @Getter protected String dateLibrary = DateLibraries.java8.name();
 
     protected enum DateLibraries {
         java8("Java 8 native JSR310 (preferred for JDK 1.8+)"),
@@ -255,10 +257,6 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
         throw new IllegalArgumentException("Invalid dateLibrary. Must be 'java8' or 'joda'");
     }
 
-    public String getDateLibrary() {
-        return this.dateLibrary;
-    }
-
     public void setModelPropertyNaming(String naming) {
         try {
             this.modelPropertyNaming = CodegenConstants.ENUM_PROPERTY_NAMING_TYPE.valueOf(naming).name();
@@ -269,13 +267,14 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
         }
     }
 
-    public String getModelPropertyNaming() {
-        return this.modelPropertyNaming;
-    }
-
 
     @Override
     public String toVarName(String name) {
+        // obtain the name from nameMapping directly if provided
+        if (nameMapping.containsKey(name)) {
+            return nameMapping.get(name);
+        }
+
         String varName = sanitizeName(name);
 
         if ("_".equals(varName)) {
@@ -309,14 +308,6 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
                         name + "'. Must be 'original', 'camelCase', " +
                         "'PascalCase' or 'snake_case'");
         }
-    }
-
-    public String getSourceFolder() {
-        return sourceFolder;
-    }
-
-    public void setSourceFolder(String sourceFolder) {
-        this.sourceFolder = sourceFolder;
     }
 
     @Override
@@ -366,10 +357,10 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
         Schema<?> schema = unaliasSchema(p);
         Schema<?> target = ModelUtils.isGenerateAliasAsModel() ? p : schema;
         if (ModelUtils.isArraySchema(target)) {
-            Schema<?> items = getSchemaItems((ArraySchema) schema);
+            Schema<?> items = ModelUtils.getSchemaItems(schema);
             return getSchemaType(target) + "[" + getTypeDeclaration(items) + "]";
         } else if (ModelUtils.isMapSchema(target)) {
-            Schema<?> inner = getAdditionalProperties(target);
+            Schema<?> inner = ModelUtils.getAdditionalProperties(target);
             if (inner == null) {
                 LOGGER.error("`{}` (map property) does not have a proper inner type defined. Default to type:string", p.getName());
                 inner = new StringSchema().description("TODO default missing map inner type to string");
@@ -396,12 +387,11 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
     @Override
     public String toInstantiationType(Schema p) {
         if (ModelUtils.isMapSchema(p)) {
-            String inner = getSchemaType(getAdditionalProperties(p));
+            String inner = getSchemaType(ModelUtils.getAdditionalProperties(p));
             return instantiationTypes.get("map") + "[String, " + inner + "]";
         } else if (ModelUtils.isArraySchema(p)) {
-            ArraySchema ap = (ArraySchema) p;
-            String inner = getSchemaType(ap.getItems());
-            return (ModelUtils.isSet(ap) ? instantiationTypes.get("set") : instantiationTypes.get("array")) + "[" + inner + "]";
+            String inner = getSchemaType(ModelUtils.getSchemaItems(p));
+            return (ModelUtils.isSet(p) ? instantiationTypes.get("set") : instantiationTypes.get("array")) + "[" + inner + "]";
         } else {
             return null;
         }
@@ -425,13 +415,12 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
         } else if (ModelUtils.isIntegerSchema(p)) {
             return null;
         } else if (ModelUtils.isMapSchema(p)) {
-            String inner = getSchemaType(getAdditionalProperties(p));
+            String inner = getSchemaType(ModelUtils.getAdditionalProperties(p));
             return "new HashMap[String, " + inner + "]() ";
         } else if (ModelUtils.isArraySchema(p)) {
-            ArraySchema ap = (ArraySchema) p;
-            String inner = getSchemaType(ap.getItems());
+            String inner = getSchemaType(ModelUtils.getSchemaItems(p));
             String genericType;
-            if (ModelUtils.isSet(ap)) {
+            if (ModelUtils.isSet(p)) {
                 genericType = instantiationTypes.get("set");
             } else {
                 genericType = instantiationTypes.get("array");
@@ -470,8 +459,7 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
     public CodegenProperty fromProperty(String name, Schema p, boolean required) {
         CodegenProperty prop = super.fromProperty(name, p, required);
         if (ModelUtils.isArraySchema(p)) {
-            ArraySchema as = (ArraySchema) p;
-            if (ModelUtils.isSet(as)) {
+            if (ModelUtils.isSet(p)) {
                 prop.containerType = "set";
             }
         }
@@ -610,10 +598,6 @@ public abstract class AbstractScalaCodegen extends DefaultCodegen {
         }
 
         return operationId;
-    }
-
-    public void setInvokerPackage(String invokerPackage) {
-        this.invokerPackage = invokerPackage;
     }
 
     @Override

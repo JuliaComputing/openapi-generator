@@ -20,7 +20,6 @@ package org.openapitools.codegen.languages;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import io.swagger.v3.core.util.Json;
-import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.openapitools.codegen.*;
@@ -293,11 +292,10 @@ public abstract class AbstractEiffelCodegen extends DefaultCodegen implements Co
     @Override
     public String getTypeDeclaration(Schema p) {
         if (ModelUtils.isArraySchema(p)) {
-            ArraySchema ap = (ArraySchema) p;
-            Schema inner = ap.getItems();
+            Schema inner = ModelUtils.getSchemaItems(p);
             return "LIST [" + getTypeDeclaration(inner) + "]";
         } else if (ModelUtils.isMapSchema(p)) {
-            Schema inner = getAdditionalProperties(p);
+            Schema inner = ModelUtils.getAdditionalProperties(p);
 
             return getSchemaType(p) + " [" + getTypeDeclaration(inner) + "]";
         }
@@ -569,7 +567,7 @@ public abstract class AbstractEiffelCodegen extends DefaultCodegen implements Co
     public String toInstantiationType(Schema p) {
         return getTypeDeclaration(p);
 //        if (ModelUtils.isMapSchema(p)) {
-//            Schema additionalProperties2 = getAdditionalProperties(p);
+//            Schema additionalProperties2 = ModelUtils.getAdditionalProperties(p);
 //            String type = additionalProperties2.getType();
 //            if (null == type) {
 //                LOGGER.error("No Type defined for Additional Schema " + additionalProperties2 + "\n" //
@@ -578,8 +576,7 @@ public abstract class AbstractEiffelCodegen extends DefaultCodegen implements Co
 //            String inner = toModelName(getSchemaType(additionalProperties2));
 //            return instantiationTypes.get("map") + " [" + inner + "]";
 //        } else if (ModelUtils.isArraySchema(p)) {
-//            ArraySchema ap = (ArraySchema) p;
-//            String inner = toModelName(getSchemaType(ap.getItems()));
+//            String inner = toModelName(getSchemaType(ModelUtils.getSchemaItems(p)));
 //            return instantiationTypes.get("array") + " [" + inner + "]";
 //        } else {
 //            return null;
